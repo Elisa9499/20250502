@@ -37,13 +37,19 @@ function draw() {
   overlayGraphics.clear(); // 清除之前的內容
   overlayGraphics.background(0); // 設定背景顏色為黑色
 
-  // 每隔 20 繪製一個圓，圓的顏色取自 video 的相對位置
+  // 每隔 20 繪製一個方框，方框的顏色取自 video 的相對位置
   for (let i = 0; i < videoWidth; i += 20) {
     for (let j = 0; j < videoHeight; j += 20) {
       let col = video.get(i, j); // 取得 video 中相對位置的顏色
-      overlayGraphics.fill(col); // 設定圓的顏色
+
+      // 繪製方框
+      overlayGraphics.fill(col); // 設定方框的顏色
       overlayGraphics.noStroke();
-      overlayGraphics.ellipse(i + 10, j + 10, 15, 15); // 繪製圓，置於單位格中央
+      overlayGraphics.rect(i + 1, j + 1, 18, 18); // 繪製方框，稍微縮小以避免重疊
+
+      // 繪製中間的黑色圓
+      overlayGraphics.fill(0); // 設定圓的顏色為黑色
+      overlayGraphics.ellipse(i + 10, j + 10, 5, 5); // 繪製圓，置於方框中央
     }
   }
 
