@@ -1,4 +1,5 @@
 let video;
+let overlayGraphics;
 
 function setup() {
   createCanvas(windowWidth, windowHeight); // 設定畫布為全螢幕
@@ -20,10 +21,37 @@ function draw() {
   let x = (width - videoWidth) / 2;
   let y = (height - videoHeight) / 2;
 
-  // 在畫布上繪製攝影機影像
-  image(video, x, y, videoWidth, videoHeight);
+  // 翻轉畫布以修正影像左右顛倒
+  push(); // 儲存當前繪圖設定
+  translate(width, 0); // 將畫布原點移動到右上角
+  scale(-1, 1); // 水平翻轉畫布
+  image(video, x, y, videoWidth, videoHeight); // 繪製影像
+  pop(); // 恢復繪圖設定
+
+  // 如果 overlayGraphics 尚未初始化，則初始化
+  if (!overlayGraphics) {
+    overlayGraphics = createGraphics(videoWidth, videoHeight); // 建立與視訊畫面相同大小的圖形
+  }
+
+  // 在 overlayGraphics 上繪製內容
+  overlayGraphics.clear(); // 清除之前的內容
+  overlayGraphics.background(0); // 設定背景顏色為黑色
+
+  // 每隔 20 繪製一個圓，圓的顏色取自 video 的相對位置
+  for (let i = 0; i < videoWidth; i += 20) {
+    for (let j = 0; j < videoHeight; j += 20) {
+      let col = video.get(i, j); // 取得 video 中相對位置的顏色
+      overlayGraphics.fill(col); // 設定圓的顏色
+      overlayGraphics.noStroke();
+      overlayGraphics.ellipse(i + 10, j + 10, 15, 15); // 繪製圓，置於單位格中央
+    }
+  }
+
+  // 將 overlayGraphics 顯示在視訊畫面上方
+  image(overlayGraphics, x, y);
 }
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight); // 當視窗大小改變時，調整畫布大小
+  overlayGraphics = null; // 重置 overlayGraphics，讓它在下一次 draw() 中重新初始化
 }
